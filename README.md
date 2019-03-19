@@ -1,4 +1,4 @@
-#TEXT TO JPG'S!!!!!!!
+#TEXT TO JPG'S!!!!!!!#
 Take all your favorite texts and convert them to the more reliable format of jpg
 
 Changelog
