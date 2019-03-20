@@ -1,5 +1,5 @@
-#TEXT TO JPG'S!!!!!!!#
-Take all your favorite texts and convert them to the more reliable format of jpg
+#TEXT TO A PPM!!!!!!!
+Take all your favorite texts and convert them to the more reliable format of ppm
 
 Changelog
-V1.0 Converts only input text to a jpg
+V1.0 Converts only input text to a ppm
