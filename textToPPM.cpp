@@ -7,15 +7,14 @@
 
 void mySleep(int secondsMs)
 {
-	#ifdef LINUX
+	#ifdef __linux__
 		usleep(secondsMs *1000);
 	#endif
 
-	#ifdef WINDOWS
+	#ifdef __WIN32__
 		Sleep(secondsMs)
 	#endif
 }
-
 
 #include <iostream>
 #include <string>
@@ -24,34 +23,29 @@ void mySleep(int secondsMs)
 
 using namespace std;
 
-const int width = 1024, height = 1024;
+const int width = 255, height = 255;
 
-void createImage(int strLen);
+void createImage(string str);
 
-void spinner();
+void spinner(bool Alive);
 
 int main()
 {
-	int strLen = 0;
-
+	bool isAlive = true;
 	string inputText;
 	cout << "Please input text to convert to ppm: " << endl;
 	cin >> inputText;
 
-	strLen = sizeof(inputText);
-
-	//spinner();
-
-	thread t1(createImage, strLen);
-	thread t2(spinner);
+	thread t1(createImage, inputText);
+//	thread t2(spinner, t1.joinable());
 
 	t1.join();
-	t2.joinable();
+//	t2.join();
 
 	return 0;
 }
 
-void createImage(int strLen)
+void createImage(string str)
 {
 	ofstream file;
 	file.open("IAMPPM.ppm");
@@ -59,14 +53,18 @@ void createImage(int strLen)
 	file << width << " " << height << endl;
 	file << "255" << endl;
 
+	int strSize = sizeof(str);
+	int seed = 0;
+
 	for(int i = 0; i < height; i++)
 	{
-		strLen * 3 % 255;
 		for(int j = 0; j < width; j++)
 		{
-			int r = j % 255;
-			int g = i * strLen % 255;
-			int b = i * j * strLen % 255;
+			seed = str[i % strSize];
+
+			int r = (j * (unsigned int)seed) % 255;
+			int g = (i * (unsigned int)seed) % 255;
+			int b = ((i * j) * (unsigned int)seed) % 255;
 			file << r << " " << g << " " << b << endl;
 		}
 	}
@@ -74,11 +72,11 @@ void createImage(int strLen)
 	file.close();
 }
 
-void spinner()
+void spinner(bool alive)
 {
 	char position = '|';
 	//int positionValue = 0;
-	while(true)
+	while(alive)
 	{
 		switch (position)
 		{
@@ -99,6 +97,6 @@ void spinner()
 				cout << "\r" << position << flush;
 				break;
 		}
-		//mySleep(1);
+		mySleep(1);
 	}
 }
