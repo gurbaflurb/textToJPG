@@ -8,10 +8,10 @@
 ## Changelog
 V1.0 Converts only input text to a ppm in a not so random format
 	Known Issues
-	+ Throws errors when quitting because of thread management
-	+ Spinner Spins very iradically
-	+ Images generated are all very similar
+	- Throws errors when quitting because of thread management
+	- Spinner Spins very iradically
+	- Images generated are all very similar
 
 V1.1 Images generated are now sudo random
 	- Removed Spinner until a solution is found
-	+ Fixed image pattern generation to be based on input text
+	- Fixed image pattern generation to be based on input text
