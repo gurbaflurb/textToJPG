@@ -1,46 +1,44 @@
-#ifdef __linux__
-#include <unistd.h>
-#endif
-#ifdef __WIN32__
-#include <windows.h>
-#endif
-
-void mySleep(int secondsMs)
-{
-	#ifdef __linux__
-		usleep(secondsMs *1000);
-	#endif
-
-	#ifdef __WIN32__
-		Sleep(secondsMs)
-	#endif
-}
-
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <thread>
 
 using namespace std;
 
-const int width = 255, height = 255;
+const int width = 2048, height = 2048;
 
 void createImage(string str);
 
-void spinner(bool Alive);
+void spinner();
 
-int main()
+bool isAlive = false;
+
+int main(int argc, char *argv[])
 {
-	bool isAlive = true;
 	string inputText;
-	cout << "Please input text to convert to ppm: " << endl;
-	cin >> inputText;
+
+	if(argc == 1)
+	{
+		cout << "Please input text to convert to ppm: " << endl;
+		cin >> inputText;
+	}
+	else if(argc == 2)
+	{
+		inputText = argv[1];
+	}
+	else if (argc > 2)
+	{
+		std::cout << "Too many arguments!" <<endl;
+		std::cout << "Usage:\n$./main StringForProgram" << std::endl;
+		return 0;
+	}
 
 	thread t1(createImage, inputText);
-//	thread t2(spinner, t1.joinable());
+	thread t2(spinner);
 
 	t1.join();
-//	t2.join();
+	t2.join();
 
 	return 0;
 }
@@ -70,33 +68,35 @@ void createImage(string str)
 	}
 
 	file.close();
+	isAlive = true;
 }
 
-void spinner(bool alive)
+void spinner()
 {
-	char position = '|';
-	//int positionValue = 0;
-	while(alive)
+	char spinPos = '|';
+	unsigned int positionVal = 0;
+	while(!isAlive)
 	{
-		switch (position)
+		switch (positionVal)
 		{
-			case '|':
-				position = '/';
-				cout << "\r" << position << flush;
+			case 0:
+				spinPos = '/';
+				positionVal++;
 				break;
-			case '/':
-				position = '-';
-				cout << "\r" << position << flush;
+			case 1:
+				spinPos = '-';
+				positionVal++;
 				break;
-			case '-':
-				position = '\\';
-				cout << "\r" << position << flush;
+			case 2:
+				spinPos = '\\';
+				positionVal++;
 				break;
-			case '\\':
-				position = '|';
-				cout << "\r" << position << flush;
+			default:
+				spinPos = '|';
+				positionVal = 0;
 				break;
 		}
-		mySleep(1);
+		std::cout << "\rGenerating " << spinPos << std::flush;
+		std::this_thread::sleep_for(std::chrono::milliseconds(300));
 	}
 }
