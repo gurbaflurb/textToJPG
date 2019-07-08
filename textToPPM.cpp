@@ -4,24 +4,20 @@
 #include <fstream>
 #include <thread>
 
-using namespace std;
-
-const int width = 2048, height = 2048;
-
-void createImage(string str);
-
+void createImage(std::string str);
 void spinner();
 
 bool isAlive = false;
+const int width = 2048, height = 2048;
 
 int main(int argc, char *argv[])
 {
-	string inputText;
+	std::string inputText;
 
 	if(argc == 1)
 	{
-		cout << "Please input text to convert to ppm: " << endl;
-		cin >> inputText;
+		std::cout << "Please input text to convert to ppm: " << std::endl;
+		std::cin >> inputText;
 	}
 	else if(argc == 2)
 	{
@@ -29,13 +25,13 @@ int main(int argc, char *argv[])
 	}
 	else if (argc > 2)
 	{
-		std::cout << "Too many arguments!" <<endl;
+		std::cout << "Too many arguments!" << std::endl;
 		std::cout << "Usage:\n$./main StringForProgram" << std::endl;
 		return 0;
 	}
 
-	thread t1(createImage, inputText);
-	thread t2(spinner);
+	std::thread t1(createImage, inputText);
+	std::thread t2(spinner);
 
 	t1.join();
 	t2.join();
@@ -43,27 +39,82 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void createImage(string str)
+void createImage(std::string str)
 {
-	ofstream file;
+	std::ofstream file;
 	file.open("IAMPPM.ppm");
-	file << "P3" << endl;
-	file << width << " " << height << endl;
-	file << "255" << endl;
+	file << "P3" << std::endl;
+	file << width << " " << height << std::endl;
+	file << "255" << std::endl;
 
 	int strSize = sizeof(str);
 	int seed = 0;
+	int r, g, b = 0;
 
 	for(int i = 0; i < height; i++)
 	{
 		for(int j = 0; j < width; j++)
 		{
-			seed = str[i % strSize];
+			seed = (int)(str[i % strSize]);
 
-			int r = (j * (unsigned int)seed) % 255;
-			int g = (i * (unsigned int)seed) % 255;
-			int b = ((i * j) * (unsigned int)seed) % 255;
-			file << r << " " << g << " " << b << endl;
+			if(seed == 0)
+			{
+				seed = 1;
+			}
+
+			if((i%seed) == 0)
+			{
+				r = ((j * (unsigned int)seed) % 255);
+				g = ((i * (unsigned int)seed) % 255);
+				b = (((i * j) * (unsigned int)seed) % 255);
+				file << r;
+				file << " ";
+				file << g;
+				file << " ";
+				file << b;
+				file << " ";
+				file << std::endl;
+			}
+			else if ((i%seed) == 1)
+			{
+				r = ((j * (unsigned int)seed) % 255);
+				g = ((i * (unsigned int)seed) % 255);
+				b = (((i * j) * (unsigned int)seed) % 255);
+				file << r;
+				file << " ";
+				file << g;
+				file << " ";
+				file << b;
+				file << " ";
+				file << std::endl;
+			}
+			else if ((i%seed) == 2)
+			{
+				r = ((i * (unsigned int)seed) % 255);
+				g = ((j * (unsigned int)seed) % 255);
+				b = (((i * j) * (unsigned int)seed) % 255);
+				file << r;
+				file << " ";
+				file << g;
+				file << " ";
+				file << b;
+				file << " ";
+				file << std::endl;
+			}
+			else
+			{
+				r = ((j * (unsigned int)seed) % 255);
+				g = ((i * (unsigned int)seed) % 255);
+				b = (((i * j) * (unsigned int)seed) % 255);
+				file << r;
+				file << " ";
+				file << g;
+				file << " ";
+				file << b;
+				file << " ";
+				file << std::endl;
+			}
+
 		}
 	}
 
@@ -99,4 +150,7 @@ void spinner()
 		std::cout << "\rGenerating " << spinPos << std::flush;
 		std::this_thread::sleep_for(std::chrono::milliseconds(300));
 	}
+	std::cout << "\r************************" << std::endl;
+	std::cout << "File \"IAMPPM\" generated" << std::endl;
+	std::cout << "************************" << std::endl;
 }
